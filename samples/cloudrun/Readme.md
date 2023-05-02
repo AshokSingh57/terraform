@@ -3,3 +3,8 @@
 Includes a batch file to create a GCP service account to be used by Terraform script
 Terraform script to create Cloud run, Pubsub Topic, Pubsub Subscription,
 register URL to be invoked by subscription for push notifications
+
+main.tf sets Cloud run meta tags for idle/max instances
+
+
+Batch file iterates to send multiple messages.

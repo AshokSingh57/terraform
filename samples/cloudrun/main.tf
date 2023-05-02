@@ -28,24 +28,42 @@ resource "google_project_service" "cloudrun_api" {
 }
 
 
-resource "google_pubsub_topic" "default" {
-  name = "pubsub_topic"
+resource "google_pubsub_topic" "topic-1" {
+  name = var.gcp_pubsub_topic_1
+}
+
+resource "google_pubsub_topic" "topic-2" {
+  name = var.gcp_pubsub_topic_2
 }
 
 resource "google_cloud_run_service" "default" {
-  name     = var.gcp_pubsub_topic_1
+
+  name     = var.gcp_run_pubsub
   location = var.gcp_region
+  metadata {
+		  annotations = {
+			  "run.googleapis.com/launch-stage"  = "BETA"
+		  }
+	  }
   template {
     spec {
       containers {
         image = var.gcp_containerimage
       }
     }
+    metadata {
+     annotations = {
+     "run.googleapis.com/launch-stage"  = "BETA" 
+ #    "autoscaling.knative.dev/minScale" = "5"
+ #   "autoscaling.knative.dev/maxScale" = "1000"
+        }
+      }
   }
   traffic {
     percent         = 100
     latest_revision = true
   }
+   
   depends_on = [google_project_service.cloudrun_api]
 }
 
@@ -73,9 +91,9 @@ resource "google_project_iam_binding" "project_token_creator" {
   members = ["serviceAccount:${google_project_service_identity.pubsub_agent.email}"]
 }
 
-resource "google_pubsub_subscription" "subscription" {
-  name  = "pubsub_subscription"
-  topic = google_pubsub_topic.default.name
+resource "google_pubsub_subscription" "subscription-1" {
+  name  = var.gcp_pubsub_subscription_1
+  topic = var.gcp_pubsub_topic_1
   push_config {
     push_endpoint = google_cloud_run_service.default.status[0].url
     oidc_token {
@@ -87,3 +105,19 @@ resource "google_pubsub_subscription" "subscription" {
   }
   depends_on = [google_cloud_run_service.default]
 }
+
+resource "google_pubsub_subscription" "subscription-2" {
+  name  = var.gcp_pubsub_subscription_2
+  topic = var.gcp_pubsub_topic_2
+  push_config {
+    push_endpoint = google_cloud_run_service.default.status[0].url
+    oidc_token {
+      service_account_email = google_service_account.sa.email
+    }
+    attributes = {
+      x-goog-version = "v1"
+    }
+  }
+  depends_on = [google_cloud_run_service.default]
+}
+
