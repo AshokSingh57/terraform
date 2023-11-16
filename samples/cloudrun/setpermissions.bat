@@ -1,7 +1,7 @@
 # Script to create a service account identity to be used by Terraform script 
 # for provisioning CloudRun with web hook
-# Parameter 1 is the service account name
-# Parameter 2 is GCP project name
+# Parameter 2 is the service account name
+# Parameter 1 is GCP project name
 SVCNAME=$2@$1.iam.gserviceaccount.com
 SVCACCNAME=serviceAccount:$SVCNAME
 echo $SVCNAME
