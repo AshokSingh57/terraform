@@ -79,16 +79,17 @@ resource "google_cloud_run_service_iam_binding" "binding" {
   members  = ["serviceAccount:${google_service_account.sa.email}"]
 }
 
-resource "google_project_service_identity" "pubsub_agent" {
-  provider = google-beta
-  project  = data.google_project.project.project_id
-  service  = "pubsub.googleapis.com"
-}
+# resource "google_project_service_identity" "pubsub_agent" {
+#  provider = google-beta
+# project  = data.google_project.project.project_id
+# service  = "pubsub.googleapis.com"
 
 resource "google_project_iam_binding" "project_token_creator" {
   project = data.google_project.project.project_id
   role    = "roles/iam.serviceAccountTokenCreator"
-  members = ["serviceAccount:${google_project_service_identity.pubsub_agent.email}"]
+# members = ["serviceAccount:${google_project_service_identity.pubsub_agent.email}"]
+# members = ["serviceAccount:service-1011746946762@gcp-sa-pubsub.iam.gserviceaccount.com"]
+  members = ["serviceAccount:service-${var.gcp_project_number}@gcp-sa-pubsub.iam.gserviceaccount.com"]
 }
 
 resource "google_pubsub_subscription" "subscription-1" {
