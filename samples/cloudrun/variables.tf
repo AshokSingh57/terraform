@@ -1,13 +1,19 @@
 variable "credentials_file" {
   description = "GCP credentials file fully qualified path"
   type        = string
-  default     = "pbproject1-1dcc54af066e.json"
+  default     = "<GCP project private key files>.json"
 }
 
 variable "gcp_project_name" {
   description = "GCP project name"
   type        = string
-  default     = "pbproject1"
+  default     = "<GCP Project name>"
+}
+
+variable "gcp_project_number" {
+  description = "GCP project number"
+  type        = string
+  default     = "<GCP project number"
 }
 
 variable "gcp_region" {
@@ -56,5 +62,5 @@ variable "gcp_run_pubsub" {
 variable "gcp_containerimage" {
   description = "pubsub container image"
   type        = string
-  default     = "gcr.io/pbproject1/pubsub"
+  default     = "gcr.io/<GCP Project name>/pubsub"
 }
